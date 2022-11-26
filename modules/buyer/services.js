@@ -7,6 +7,7 @@ const logging        = require('../../logging/logging');
 
 exports.sellerList           = sellerList;
 exports.getSellerCatalogByID = getSellerCatalogByID;
+exports.checkProductQuantity = checkProductQuantity;
 
 async function sellerList(apiReference) {
     try {
@@ -30,6 +31,21 @@ async function getSellerCatalogByID(apiReference ,opts) {
         return sellerCatalogData;
     }catch(error) {
         logging.logError(req.apiReference, { EVENT: "getSellerCatalogByID services" , ERROR: error } );
+
+        throw new Error(error);
+    }
+}
+
+async function checkProductQuantity(apiReference, product_ids) {
+    try{
+        const productDetails = await commonFunction.fetchDataFromTable(apiReference, constants.TABLENAME.PRODUCTS, "", {
+            product_ids: product_ids
+        });
+
+        return productDetails;
+
+    }catch(error) {
+        logging.logError(req.apiReference, { EVENT: "checkProductQuantity services" , ERROR: error, OPTS: product_ids } );
 
         throw new Error(error);
     }

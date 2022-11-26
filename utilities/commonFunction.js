@@ -55,6 +55,11 @@ exports.fetchDataFromTable = (apiReference, tableName, selectItems, criteria) =>
             values.push(criteria.seller_user_id);
         }
 
+        if(criteria.hasOwnProperty('product_ids')) {
+            sqlQuery += " AND id IN ( ? ) ";
+            values.push(criteria.product_ids);
+        }
+
         try{
             const data = await dbHandler.executeQuery(apiReference, sqlQuery, values);
             resolve(data);
