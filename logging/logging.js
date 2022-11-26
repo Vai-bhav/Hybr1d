@@ -3,7 +3,7 @@ exports.logError = logError;
 
 function logError(apiReference, log) {
     if (apiReference
-      && apiReference.module
+      && apiReference.apiReferenceModule
       && apiReference.api) {
   
       try {
@@ -11,6 +11,6 @@ function logError(apiReference, log) {
       }
       catch (exception) {
       }
-      console.error("-->" + apiReference.module + " :=: " + apiReference.api + " :=: " + log);
+      console.error("-->" + apiReference.apiReferenceModule + " :=: " + apiReference.api + " :=: " + log);
     }
 }
