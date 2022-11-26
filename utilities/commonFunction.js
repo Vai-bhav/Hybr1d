@@ -1,11 +1,11 @@
 
 const dbHandler = require('../database/database');
 
-exports.insertDataIntoTable = (tableName, insertObj) => {
+exports.insertDataIntoTable = (apiReference, tableName, insertObj) => {
     return new Promise(async (resolve, reject) => {
         let sql = `INSERT INTO ${tableName} SET ? `;
         try {
-            const insertData = await dbHandler.executeQuery(sql, [insertObj]);
+            const insertData = await dbHandler.executeQuery(apiReference, sql, [insertObj]);
             resolve(insertData);
         }catch(error) {
             reject(error);
@@ -13,7 +13,7 @@ exports.insertDataIntoTable = (tableName, insertObj) => {
     })
 }
 
-exports.updateDataIntoTable = (tableName, updateObj, whereObj) => {
+exports.updateDataIntoTable = (apiReference, tableName, updateObj, whereObj) => {
     return new Promise( async(resolve, reject) => {
         let sqlQuery = `UPDATE ${tableName} SET ? WHERE 1=1 `;
         let values = [updateObj];
@@ -23,7 +23,7 @@ exports.updateDataIntoTable = (tableName, updateObj, whereObj) => {
         }
 
         try{
-            await dbHandler.executeQuery(sqlQuery, values);
+            await dbHandler.executeQuery(apiReference, sqlQuery, values);
             resolve();
         }catch(error) {
             reject(error);
@@ -32,7 +32,7 @@ exports.updateDataIntoTable = (tableName, updateObj, whereObj) => {
     })
 }
 
-exports.fetchDataFromTable = (tableName, selectItems, criteria) => {
+exports.fetchDataFromTable = (apiReference, tableName, selectItems, criteria) => {
     return new Promise( async(resolve, reject) => {
         
         let columns = selectItems || "*";
@@ -51,7 +51,7 @@ exports.fetchDataFromTable = (tableName, selectItems, criteria) => {
         }
 
         try{
-            const data = await dbHandler.executeQuery(sqlQuery, values);
+            const data = await dbHandler.executeQuery(apiReference, sqlQuery, values);
             resolve(data);
         }catch(error) {
             reject(error);

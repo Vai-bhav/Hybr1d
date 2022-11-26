@@ -1,5 +1,6 @@
 
 const services = require('./services');
+const logging  = require('../../logging/logging');
 
 const _ = require('underscore');
 
@@ -11,7 +12,7 @@ async function registerUser(req, res) {
     try{
         let email = opts.email;
 
-        let userDetails = await services.fetchUserDetails({ email });
+        let userDetails = await services.fetchUserDetails(req.apiReference, { email });
 
         if(!_.isEmpty(userDetails)) {
             return res.status(200).send({
@@ -28,7 +29,7 @@ async function registerUser(req, res) {
 
         opts.encryptedPassword = await services.encryptPassword(opts);
 
-        const result = await services.registerUser(opts);
+        const result = await services.registerUser(req.apiReference ,opts);
 
         if(!result?.insertUser?.affectedRows) {
             throw new Error("Error while inserting data into table");
@@ -45,6 +46,7 @@ async function registerUser(req, res) {
             }
         });
     }catch(error) {
+        logging.logError(req.apiReference, { BODY: req.body , ERROR: error } );
         res.status(400).send({
             message: "Error while creating user",
             data: {

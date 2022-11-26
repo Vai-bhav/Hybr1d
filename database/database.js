@@ -13,11 +13,11 @@ const database = mysql.createPool(dbConfig);
 
 exports.executeQuery = executeQuery;
 
-function executeQuery(sqlQuery, sqlParams) {
+function executeQuery(apiReference, sqlQuery, sqlParams) {
     return new Promise((resolve, reject) => {
         database.query(sqlQuery, sqlParams, (sqlError, sqlResult) => {
             if(sqlError) {
-                console.error("Error while executing query ", sqlError);
+                logging.logError(apiReference, { QUERY: sqlQuery , PARAMS: sqlParams, SQL_ERROR: sqlError } );
                 reject(sqlError);
             }
             resolve(sqlResult); 

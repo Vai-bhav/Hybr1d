@@ -4,12 +4,20 @@ const Joi = require('joi');
 exports.registerUser = registerUser;
 exports.loginUser    = loginUser;
 
+const apiReferenceModule = "user";
+
 function validate(opts, schema) {
     const validate = schema.validate(opts);
     return validate;
 }
 
 async function registerUser(req, res, next) {
+
+    req.apiReference = {
+        apiReferenceModule,
+        api: "registerUser"
+    }
+
     const schema = Joi.object().keys({
         username: Joi.string().required(),
         email: Joi.string().required(),

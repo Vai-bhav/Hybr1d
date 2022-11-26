@@ -15,7 +15,7 @@ async function encryptPassword(opts) {
     return crypto.createHash('md5').update(opts.password).digest('hex');
 }
 
-async function registerUser(opts) {
+async function registerUser(apiReference , opts) {
     try{
         const userData = {
             username          : opts.username,
@@ -24,13 +24,13 @@ async function registerUser(opts) {
             user_type         : opts.user_type
         }
 
-        const insertResult = await commonFunction.insertDataIntoTable(constants.TABLENAME.USER_DATA, userData);
+        const insertResult = await commonFunction.insertDataIntoTable(apiReference, constants.TABLENAME.USER_DATA, userData);
 
         userData.user_id = insertResult.insertId;
 
         const access_token = createToken(userData);
 
-        await commonFunction.updateDataIntoTable(constants.TABLENAME.USER_DATA, {
+        await commonFunction.updateDataIntoTable(apiReference, constants.TABLENAME.USER_DATA, {
             access_token: access_token
         }, {
             user_id: userData.user_id
@@ -41,11 +41,13 @@ async function registerUser(opts) {
             userData: {
                 user_id  : userData.user_id,
                 username : userData.username,
+                email    : userData.email,
                 user_type: userData.user_type,
                 access_token
             }
         };
     }catch(error) {
+        logging.logError(apiReference, { OPTS: opts , ERROR: error } );
         throw new Error("Error in user creation services ", error);
     }
 }
@@ -67,17 +69,18 @@ function createToken(opts) {
     }
 }
 
-async function fetchUserDetails(opts) {
+async function fetchUserDetails(apiReference ,opts) {
     try {
         const tableName = constants.TABLENAME.USER_DATA;
         const userData = {
             email: opts.email
         };
         if(opts.user_type) userData.user_type = opts.user_type;
-        const userDetails = await commonFunction.fetchDataFromTable(tableName, "user_id, email, username, encrypted_password, user_type, access_token", userData);
+        const userDetails = await commonFunction.fetchDataFromTable(apiReference ,tableName, "user_id, email, username, encrypted_password, user_type, access_token", userData);
 
         return userDetails;
     }catch(error) {
+        logging.logError(apiReference, { OPTS: opts , ERROR: error } );
         throw new Error("USER FETCH DATA ERROR: ", error);
     }
 }
