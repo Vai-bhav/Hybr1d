@@ -50,6 +50,11 @@ exports.fetchDataFromTable = (apiReference, tableName, selectItems, criteria) =>
             values.push(criteria.user_type);
         }
 
+        if(criteria.hasOwnProperty('seller_user_id')) {
+            sqlQuery += " AND seller_user_id = ? ";
+            values.push(criteria.seller_user_id);
+        }
+
         try{
             const data = await dbHandler.executeQuery(apiReference, sqlQuery, values);
             resolve(data);
