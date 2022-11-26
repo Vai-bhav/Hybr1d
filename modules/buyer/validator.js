@@ -1,6 +1,8 @@
 
 const Joi = require('joi');
 
+const apiReferenceModule = "buyer";
+
 exports.sellerList = sellerList;
 
 function validate(opts, schema) {
@@ -9,6 +11,11 @@ function validate(opts, schema) {
 }
 
 function sellerList(req, res, next) {
+    
+    req.apiReference = {
+        apiReferenceModule,
+        api: "sellerList"
+    }
     
     const schema = Joi.object().keys({
         access_token: Joi.string().required()

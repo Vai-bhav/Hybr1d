@@ -6,3 +6,8 @@ exports.TABLENAME = {
 }
 
 exports.JWT_EXPIRY_TIME = "24h";
+
+exports.USER = {
+    BUYERS: 1,
+    SELLERS: 2
+}
