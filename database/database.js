@@ -1,11 +1,12 @@
 
 const mysql = require('mysql');
+const config = require('../config/config');
 
-let dbConfig = {
-    host: "localhost",
-    password: "",
-    user: "root",
-    database: "hybr1d"
+const dbConfig = {
+    host: config.DATABASE_CONFIG.HOST,
+    password: config.DATABASE_CONFIG.PASSWORD,
+    user: config.DATABASE_CONFIG.USER,
+    database: config.DATABASE_CONFIG.DATABASE
 }
 
 const database = mysql.createPool(dbConfig);
