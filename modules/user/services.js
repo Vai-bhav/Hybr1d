@@ -8,6 +8,7 @@ const jwt            = require('jsonwebtoken');
 
 exports.registerUser     = registerUser;
 exports.encryptPassword  = encryptPassword;
+exports.fetchUserDetails = fetchUserDetails;
 
 async function encryptPassword(opts) {
     return crypto.createHash('md5').update(opts.password).digest('hex');
@@ -64,3 +65,19 @@ function createToken(opts) {
         throw new Error("Error while generating token: ", error);
     }
 }
+
+async function fetchUserDetails(opts) {
+    try {
+        const tableName = constants.TABLENAME.USER_DATA;
+        const userData = {
+            email: opts.email
+        };
+        
+        const userDetails = await commonFunction.fetchDataFromTable(tableName, "user_id, email, username, encrypted_password, user_type, access_token", userData);
+
+        return userDetails;
+    }catch(error) {
+        throw new Error("USER FETCH DATA ERROR: ", error);
+    }
+}
+

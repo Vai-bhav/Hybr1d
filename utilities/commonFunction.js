@@ -31,3 +31,25 @@ exports.updateDataIntoTable = (tableName, updateObj, whereObj) => {
 
     })
 }
+
+exports.fetchDataFromTable = (tableName, selectItems, criteria) => {
+    return new Promise( async(resolve, reject) => {
+        
+        let columns = selectItems || "*";
+
+        let sqlQuery = `SELECT ${columns} FROM ${tableName} WHERE 1=1 `
+        let values = [];
+
+        if(criteria.hasOwnProperty('email')) {
+            sqlQuery += " AND email = ? ";
+            values.push(criteria.email);
+        }
+
+        try{
+            const data = await dbHandler.executeQuery(sqlQuery, values);
+            resolve(data);
+        }catch(error) {
+            reject(error);
+        }
+    })
+}

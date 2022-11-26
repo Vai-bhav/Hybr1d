@@ -8,7 +8,22 @@ exports.registerUser = registerUser;
 async function registerUser(req, res) {
     const opts = req.body;
     try{
-        let username = opts.username;
+        let email = opts.email;
+
+        let userDetails = await services.fetchUserDetails({ email });
+
+        if(!_.isEmpty(userDetails)) {
+            return res.status(200).send({
+                message: "USER ALREADY REGISTERED",
+                data: {
+                    user_id     : userDetails[0].user_id,
+                    email       : userDetails[0].email,
+                    username    : userDetails[0].username,
+                    user_type   : userDetails[0].user_type,
+                    access_token: userDetails[0].access_token
+                }
+            });
+        }
 
         opts.encryptedPassword = await services.encryptPassword(opts);
 
