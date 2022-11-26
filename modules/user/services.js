@@ -80,7 +80,7 @@ async function fetchUserDetails(apiReference ,opts) {
 
         return userDetails;
     }catch(error) {
-        logging.logError(apiReference, { OPTS: opts , ERROR: error } );
+        logging.logError(apiReference, { EVENT: "fetch user details servives" , OPTS: opts , ERROR: error } );
         throw new Error("USER FETCH DATA ERROR: ", error);
     }
 }

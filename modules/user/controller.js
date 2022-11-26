@@ -46,7 +46,7 @@ async function registerUser(req, res) {
             }
         });
     }catch(error) {
-        logging.logError(req.apiReference, { BODY: req.body , ERROR: error } );
+        logging.logError(req.apiReference, { EVENT: "register user controller" , BODY: req.body , ERROR: error } );
         res.status(400).send({
             message: "Error while creating user",
             data: {
