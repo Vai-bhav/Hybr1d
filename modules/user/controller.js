@@ -32,6 +32,8 @@ async function registerUser(req, res) {
         const result = await services.registerUser(req.apiReference ,opts);
 
         if(!result?.insertUser?.affectedRows) {
+            logging.logError(req.apiReference, { BODY: req.body , ERROR: error } );
+
             throw new Error("Error while inserting data into table");
         }
 
@@ -59,7 +61,7 @@ async function registerUser(req, res) {
 async function loginUser(req, res) {
     const opts = req.body;
     try {
-        const userData = await services.fetchUserDetails(opts);
+        const userData = await services.fetchUserDetails(req.apiReference, opts);
         if(_.isEmpty(userData)) {
             return res.status(200).send({
                 message: "USER NOT REGISTERED"
@@ -78,7 +80,7 @@ async function loginUser(req, res) {
 
         opts.user_id = userData[0].user_id;
 
-        await services.loginUser(opts);
+        await services.loginUser(req.apiReference, opts);
 
         res.status(200).send({
             message: "LOGIN SUCCESSFUL",
@@ -91,6 +93,12 @@ async function loginUser(req, res) {
         });
         
     }catch(error) {
-        res.sendStatus(400);
+        logging.logError(req.apiReference, { EVENT: "login user controller" , BODY: req.body , ERROR: error } );
+        res.status(400).send({
+            message: "Error while user login ",
+            data: {
+                error
+            }
+        })
     }
 }

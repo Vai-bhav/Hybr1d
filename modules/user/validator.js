@@ -37,6 +37,11 @@ async function registerUser(req, res, next) {
 
 async function loginUser(req, res, next) {
 
+    req.apiReference = {
+        apiReferenceModule,
+        api: "loginUser"
+    }
+
     const schema = Joi.object().keys({
         email    : Joi.string().required(),
         password : Joi.string().required(),

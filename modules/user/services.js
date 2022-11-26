@@ -28,7 +28,7 @@ async function registerUser(apiReference , opts) {
 
         userData.user_id = insertResult.insertId;
 
-        const access_token = createToken(userData);
+        const access_token = createToken(apiReference, userData);
 
         await commonFunction.updateDataIntoTable(apiReference, constants.TABLENAME.USER_DATA, {
             access_token: access_token
@@ -48,11 +48,12 @@ async function registerUser(apiReference , opts) {
         };
     }catch(error) {
         logging.logError(apiReference, { OPTS: opts , ERROR: error } );
+        
         throw new Error("Error in user creation services ", error);
     }
 }
 
-function createToken(opts) {
+function createToken(apiReference, opts) {
     try {
         const token = jwt.sign({
             user_id  : opts.user_id,
@@ -65,6 +66,8 @@ function createToken(opts) {
     
         return token;
     }catch(error) {
+        logging.logError(apiReference, { EVENT: "create access token " ,OPTS: opts , ERROR: error } );
+
         throw new Error("Error while generating token: ", error);
     }
 }
@@ -85,12 +88,12 @@ async function fetchUserDetails(apiReference ,opts) {
     }
 }
 
-async function loginUser(opts) {
+async function loginUser(apiReference, opts) {
     try {
 
-        const access_token = createToken(opts);
+        const access_token = createToken(apiReference, opts);
 
-        await commonFunction.updateDataIntoTable(constants.TABLENAME.USER_DATA, {
+        await commonFunction.updateDataIntoTable(apiReference, constants.TABLENAME.USER_DATA, {
             access_token
         }, {
             email: opts.email,
@@ -102,6 +105,8 @@ async function loginUser(opts) {
         return;
 
     }catch(error) {
+        logging.logError(req.apiReference, { EVENT: "login user services " , BODY: req.body , ERROR: error } );
+
         throw new Error("LOGIN USER ERROR: ", error);
     }
 }
