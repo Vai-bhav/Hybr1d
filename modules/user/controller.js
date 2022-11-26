@@ -4,6 +4,7 @@ const services = require('./services');
 const _ = require('underscore');
 
 exports.registerUser = registerUser;
+exports.loginUser    = loginUser;
 
 async function registerUser(req, res) {
     const opts = req.body;
@@ -50,5 +51,44 @@ async function registerUser(req, res) {
                 error
             }
         })
+    }
+}
+
+async function loginUser(req, res) {
+    const opts = req.body;
+    try {
+        const userData = await services.fetchUserDetails(opts);
+        if(_.isEmpty(userData)) {
+            return res.status(200).send({
+                message: "USER NOT REGISTERED"
+            })
+        }
+
+        opts.user_id = userData[0].user_id;
+
+        const encryptedPassword = await services.encryptPassword(opts);
+
+        if(encryptedPassword !== userData[0].encrypted_password) {
+            return res.status(400).send({
+                message: "INVALID CREDENTIALS. PLEASE TRY AGAIN WITH VALID USERNAME AND PASSWORD",
+            })
+        }
+
+        opts.user_id = userData[0].user_id;
+
+        await services.loginUser(opts);
+
+        res.status(200).send({
+            message: "LOGIN SUCCESSFUL",
+            data: {
+                user_id     : opts.user_id,
+                username    : userData[0].username,
+                email       : opts.email,
+                access_token: opts.access_token
+            }
+        });
+        
+    }catch(error) {
+        res.sendStatus(400);
     }
 }

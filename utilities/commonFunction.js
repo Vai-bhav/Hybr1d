@@ -45,6 +45,11 @@ exports.fetchDataFromTable = (tableName, selectItems, criteria) => {
             values.push(criteria.email);
         }
 
+        if(criteria.hasOwnProperty('user_type')) {
+            sqlQuery += " AND user_type = ? ";
+            values.push(criteria.user_type);
+        }
+
         try{
             const data = await dbHandler.executeQuery(sqlQuery, values);
             resolve(data);

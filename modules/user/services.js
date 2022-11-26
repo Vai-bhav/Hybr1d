@@ -9,6 +9,7 @@ const jwt            = require('jsonwebtoken');
 exports.registerUser     = registerUser;
 exports.encryptPassword  = encryptPassword;
 exports.fetchUserDetails = fetchUserDetails;
+exports.loginUser        = loginUser;
 
 async function encryptPassword(opts) {
     return crypto.createHash('md5').update(opts.password).digest('hex');
@@ -72,7 +73,7 @@ async function fetchUserDetails(opts) {
         const userData = {
             email: opts.email
         };
-        
+        if(opts.user_type) userData.user_type = opts.user_type;
         const userDetails = await commonFunction.fetchDataFromTable(tableName, "user_id, email, username, encrypted_password, user_type, access_token", userData);
 
         return userDetails;
@@ -81,3 +82,23 @@ async function fetchUserDetails(opts) {
     }
 }
 
+async function loginUser(opts) {
+    try {
+
+        const access_token = createToken(opts);
+
+        await commonFunction.updateDataIntoTable(constants.TABLENAME.USER_DATA, {
+            access_token
+        }, {
+            email: opts.email,
+            user_type: opts.user_type
+        })
+
+        opts.access_token = access_token;
+
+        return;
+
+    }catch(error) {
+        throw new Error("LOGIN USER ERROR: ", error);
+    }
+}

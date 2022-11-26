@@ -30,8 +30,8 @@ async function registerUser(req, res, next) {
 async function loginUser(req, res, next) {
 
     const schema = Joi.object().keys({
-        email: Joi.string().required(),
-        password: Joi.string().required(),
+        email    : Joi.string().required(),
+        password : Joi.string().required(),
         user_type: Joi.number().required().valid(1,2)
     })
 
