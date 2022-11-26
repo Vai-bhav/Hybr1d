@@ -82,7 +82,6 @@ async function createOrder(req, res) {
         let total_price = 0;
 
         for(let i=0;i<productDetails.length;i++) {
-            console.log("i ", i);
             if(hashMap.get(productDetails[i].id) > productDetails[i].product_quantity) {
                 notValidOrder = true;
                 message = `Order couldn't be placed because ${(productDetails[i].product_quantity) ? 'Only '+ (productDetails[i].product_quantity) + 'items' : 'No Item'} available for product - ${productDetails[i].product_name} and product id is ${productDetails[i].id}`;
@@ -116,8 +115,15 @@ async function createOrder(req, res) {
             });
         }
 
-        res.status(200).send({
-            message: "Order placed successfully"
+        await services.updateProductQuantity(req.apiReference, productDetails);
+
+        return res.status(200).send({
+            message: "Order placed succesfully",
+            data: {
+                order_id      : orderData.insertId,
+                total_price   : total_price,
+                transaction_id: orderData.transaction_id
+            }
         })
 
     }catch(error) {

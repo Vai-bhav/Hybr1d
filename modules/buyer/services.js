@@ -3,6 +3,7 @@
 const commonFunction = require('../../utilities/commonFunction');
 const constants      = require('../../properties/constants');
 const logging        = require('../../logging/logging');
+const dbHandler      = require('../../database/database');
 
 const uuid        = require('uuid');
 
@@ -10,6 +11,7 @@ exports.sellerList           = sellerList;
 exports.getSellerCatalogByID = getSellerCatalogByID;
 exports.checkProductQuantity = checkProductQuantity;
 exports.createOrder          = createOrder;
+exports.updateProductQuantity= updateProductQuantity;
 
 async function sellerList(apiReference) {
     try {
@@ -68,6 +70,26 @@ async function createOrder(apiReference, opts) {
         return insertOrderDetails;
     }catch(error) {
         logging.logError(apiReference, { EVENT: "createOrder services" , ERROR: error, OPTS: opts } );
+
+        throw new Error(error);
+    }
+}
+
+async function updateProductQuantity(apiReference, productDetails) {
+    try {
+        let sqlQuery = `INSERT INTO ${constants.TABLENAME.PRODUCTS} (id, seller_user_id, product_name, product_price, product_quantity) VALUES `
+        productDetails.forEach((ele, index) => {
+            sqlQuery += `( ${ele.id}, ${ele.seller_user_id}, "${ele.product_name}", ${ele.product_price}, ${ele.product_quantity} )`
+            if(index != productDetails.length-1) sqlQuery += " , "
+        })
+
+        sqlQuery += ` ON DUPLICATE KEY UPDATE product_quantity = VALUES(product_quantity), seller_user_id = VALUES(seller_user_id) , product_name = VALUES(product_name) , product_price = VALUES(product_price) `;
+
+        const result = await dbHandler.executeQuery(apiReference, sqlQuery);
+        return result;
+
+    }catch(error) {
+        logging.logError(apiReference, { EVENT: "updateProductQuantity services error" , ERROR: error, PRODUCT_DETAILS: productDetails } );
 
         throw new Error(error);
     }
