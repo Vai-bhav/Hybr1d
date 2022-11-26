@@ -10,6 +10,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const PORT = 3000;
 
+require('./modules');
+
 app.listen(PORT, function() {
     console.log(`App is running at ${PORT}`);
 });
