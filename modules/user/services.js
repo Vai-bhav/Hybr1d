@@ -1,8 +1,10 @@
 
 const commonFunction = require("../../utilities/commonFunction");
 const constants      = require('../../properties/constants');
+const config         = require('../../config/config');
 
 const crypto         = require('crypto');
+const jwt            = require('jsonwebtoken');
 
 exports.registerUser     = registerUser;
 exports.encryptPassword  = encryptPassword;
@@ -24,15 +26,41 @@ async function registerUser(opts) {
 
         userData.user_id = insertResult.insertId;
 
+        const access_token = createToken(userData);
+
+        await commonFunction.updateDataIntoTable(constants.TABLENAME.USER_DATA, {
+            access_token: access_token
+        }, {
+            user_id: userData.user_id
+        });
+
         return {
             insertUser: insertResult,
             userData: {
-                user_id: userData.user_id,
-                username: userData.username,
+                user_id  : userData.user_id,
+                username : userData.username,
                 user_type: userData.user_type,
+                access_token
             }
         };
     }catch(error) {
-        throw new Error("Error in user data insertion services ", error);
+        throw new Error("Error in user creation services ", error);
+    }
+}
+
+function createToken(opts) {
+    try {
+        const token = jwt.sign({
+            user_id  : opts.user_id,
+            email    : opts.email,
+            user_type: opts.user_type
+        }, 
+        config.SECRET_KEY, {
+            expiresIn: constants.JWT_EXPIRY_TIME
+        });
+    
+        return token;
+    }catch(error) {
+        throw new Error("Error while generating token: ", error);
     }
 }

@@ -12,3 +12,22 @@ exports.insertDataIntoTable = (tableName, insertObj) => {
         }
     })
 }
+
+exports.updateDataIntoTable = (tableName, updateObj, whereObj) => {
+    return new Promise( async(resolve, reject) => {
+        let sqlQuery = `UPDATE ${tableName} SET ? WHERE 1=1 `;
+        let values = [updateObj];
+        if(whereObj.hasOwnProperty('user_id')) {
+            sqlQuery += ' AND user_id = ? ';
+            values.push(whereObj['user_id'])
+        }
+
+        try{
+            await dbHandler.executeQuery(sqlQuery, values);
+            resolve();
+        }catch(error) {
+            reject(error);
+        }
+
+    })
+}

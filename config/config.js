@@ -5,3 +5,5 @@ exports.DATABASE_CONFIG = {
     USER: 'root',
     DATABASE: 'hybr1d'
 }
+
+exports.SECRET_KEY = "secrethybr1dkey";

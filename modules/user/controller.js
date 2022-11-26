@@ -24,7 +24,8 @@ async function registerUser(req, res) {
                 user_id     : result.userData.user_id,
                 email       : result.userData.email,
                 username    : result.userData.username,
-                user_type   : result.userData.user_type
+                user_type   : result.userData.user_type,
+                access_token: result.userData.access_token
             }
         });
     }catch(error) {
