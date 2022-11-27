@@ -6,6 +6,7 @@ const logging   = require('../../logging/logging');
 const _ = require('underscore');
 
 exports.createCatalog = createCatalog;
+exports.getOrders     = getOrders;
 
 async function createCatalog(req, res) {
     const opts = req.body;
@@ -36,6 +37,22 @@ async function createCatalog(req, res) {
 
         res.status(400).send({
             data: error
+        })
+    }
+}
+
+async function getOrders(req, res) {
+    const opts = req.query;
+    try {
+        const getOrders = await services.getOrders(req.apiReference, opts);
+        res.status(200).send({
+            data: [...getOrders]
+        });
+    }catch(error) {
+        logging.logError(req.apiReference, { EVENT: "getOrders controller" , QUERY: req.query , ERROR: error } );
+
+        res.status(400).send({
+            message: error
         })
     }
 }

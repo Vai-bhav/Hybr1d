@@ -7,6 +7,7 @@ const logging          = require('../../logging/logging');
 
 exports.getSellerProduct = getSellerProduct;
 exports.addProducts      = addProducts;
+exports.getOrders        = getOrders;
 
 async function getSellerProduct(apiReference, opts) {
     try {
@@ -43,8 +44,22 @@ async function addProducts(apiReference, opts) {
 
         return;
     }catch(error) {
-        logging.logError(apiReference, { EVENT: "add product services" , BODY: req.body , ERROR: error } );
+        logging.logError(apiReference, { EVENT: "add product services" , OPTS: opts , ERROR: error } );
 
         throw new Error("ADD PRODUCT SERVICE ERROR");
+    }
+}
+
+async function getOrders(apiReference ,opts) {
+    try {
+        const seller_id = opts.seller_id;
+        const orderDetails = await commonFunction.fetchDataFromTable(apiReference, constants.TABLENAME.ORDERS, "order_id, buyer_id, seller_id, product_id, total_price, transaction_id, created_at", {
+            seller_id: seller_id
+        });
+        return orderDetails;
+    }catch(error) {
+        logging.logError(apiReference, { EVENT: "getOrders services" , OPTS: opts , ERROR: error } );
+
+        throw new Error("Error while fetching order details ", error);
     }
 }
