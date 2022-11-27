@@ -1,0 +1,37 @@
+
+1.
+CREATE TABLE `tb_user_details` (
+  `user_id` int(10) NOT NULL AUTO_INCREMENT,
+  `email` varchar(50) NOT NULL,
+  `username` varchar(30) NOT NULL,
+  `encrypted_password` varchar(200) NOT NULL,
+  `user_type` tinyint(1) NOT NULL,
+  `access_token` varchar(300) DEFAULT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4
+
+2. 
+CREATE TABLE `tb_products` (
+  `id` int(20) NOT NULL AUTO_INCREMENT,
+  `seller_user_id` int(11) NOT NULL,
+  `product_name` varchar(200) NOT NULL,
+  `product_price` float NOT NULL,
+  `product_quantity` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4
+
+3. 
+CREATE TABLE `tb_orders` (
+  `order_id` int(20) NOT NULL AUTO_INCREMENT,
+  `buyer_id` int(10) NOT NULL,
+  `seller_id` int(10) NOT NULL,
+  `product_id` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`product_id`)),
+  `total_price` float NOT NULL,
+  `transaction_id` varchar(200) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`order_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4
+
